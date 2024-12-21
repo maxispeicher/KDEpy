@@ -1,7 +1,6 @@
 name: Build wheels
 
-on: 
-  workflow_dispatch:
+on: [push]
 
 jobs:
   build_wheels:
@@ -72,25 +71,3 @@ jobs:
         with:
           name: python-package-distributions
           path: ./dist/*.tar.gz
-
-  publish_to_pypi:
-    needs:
-      - build_wheels
-      - package_source
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/master'  # Only publish from the master branch
-
-    steps:
-      - name: Download build files
-        uses: actions/download-artifact@v3
-        with:
-          name: python-package-distributions
-          path: dist/
-          
-      # https://github.com/pypa/gh-action-pypi-publish
-      - name: Publish Python distribution to PyPI
-        uses: pypa/gh-action-pypi-publish@e53eb8b103ffcb59469888563dc324e3c8ba6f06
-        with:
-          skip-existing: true
-          user: __token__
-          password: ${{ secrets.PYPI_API_TOKEN }}
